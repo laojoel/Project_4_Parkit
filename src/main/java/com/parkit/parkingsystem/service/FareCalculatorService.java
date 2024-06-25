@@ -1,31 +1,43 @@
 package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.constants.Time;
+import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.Ticket;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
 
 public class FareCalculatorService {
 
+
     public void calculateFare(Ticket ticket){
-        if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
-            throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
+        if( (ticket.getOutTime() == 0) || (ticket.getOutTime()<=(ticket.getInTime())) ){
+            throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime());
         }
 
-        int inHour = ticket.getInTime().getHours();
-        int outHour = ticket.getOutTime().getHours();
-
-        //TODO: Some tests are failing here. Need to check if this logic is correct
-        int duration = outHour - inHour;
-
-        switch (ticket.getParkingSpot().getParkingType()){
-            case CAR: {
-                ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
-                break;
+        double price = 0.0;
+        long duration = ticket.getOutTime() - ticket.getInTime(); // In MS
+        long chargedDuration = (long)(duration - Fare.FREE_DURATION_IN_MS());
+        if (chargedDuration >= 1) {
+            switch (ticket.getParkingSpot().getParkingType()){
+                case CAR: {
+                    price = chargedDuration * Fare.CAR_RATE_PER_MS();
+                    break;
+                }
+                case BIKE: {
+                    price = chargedDuration * Fare.BIKE_RATE_PER_MS();
+                    break;
+                }
+                default: throw new IllegalArgumentException("Unkown Parking Type");
             }
-            case BIKE: {
-                ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
-                break;
+
+            if (ticket.isRecurrent()) {
+                price -= price * Fare.RECURRENCE_DISCOUNT_RATE;
             }
-            default: throw new IllegalArgumentException("Unkown Parking Type");
         }
+
+        ticket.setPrice(Fare.ROUND_PRICE_DECIMAL(price));
     }
 }

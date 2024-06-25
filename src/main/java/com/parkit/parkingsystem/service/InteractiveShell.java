@@ -37,11 +37,15 @@ public class InteractiveShell {
                     continueApp = false;
                     break;
                 }
+
                 default: System.out.println("Unsupported option. Please enter a number corresponding to the provided menu");
             }
         }
     }
 
+    public static void showMenu() {
+        loadMenu();
+    }
     private static void loadMenu(){
         System.out.println("Please select an option. Simply enter the number to choose an action");
         System.out.println("1 New Vehicle Entering - Allocate Parking Space");
