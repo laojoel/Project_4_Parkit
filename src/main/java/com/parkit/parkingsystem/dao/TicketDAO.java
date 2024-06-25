@@ -40,7 +40,6 @@ public class TicketDAO {
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);
-            //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             ps.setString(1,vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -82,8 +81,6 @@ public class TicketDAO {
         return false;
     }
 
-
-
     public boolean isRecurrent(String vehicleRegNumber, Connection con) {
         boolean isRecurrent = false;
         try {
@@ -98,21 +95,6 @@ public class TicketDAO {
         }
         return isRecurrent;
     }
-    public boolean isAlreadyInside(String vehicleRegNumber) {
-        Connection con = null;
-        boolean isAlreadyInside = true;
-        try {
-            con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement(DBConstants.VERIFY_IF_ALREADY_INSIDE);
-            ps.setString(1,vehicleRegNumber);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                isAlreadyInside = rs.getBoolean(1);
-            }
-        }catch (Exception ex){
-            logger.error("Error verifying if vehicle is already inside",ex);
-        }
-        return isAlreadyInside;
-    }
+
 
 }

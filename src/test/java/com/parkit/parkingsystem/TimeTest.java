@@ -1,14 +1,8 @@
 package com.parkit.parkingsystem;
-import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.constants.Time;
-import com.parkit.parkingsystem.model.ParkingSpot;
 import junit.framework.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.Instant;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimeTest {
     @Test

@@ -1,14 +1,7 @@
 package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.constants.Fare;
-import com.parkit.parkingsystem.constants.Time;
-import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.Ticket;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.Duration;
-
 public class FareCalculatorService {
 
 
@@ -16,7 +9,6 @@ public class FareCalculatorService {
         if( (ticket.getOutTime() == 0) || (ticket.getOutTime()<=(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime());
         }
-
         double price = 0.0;
         long duration = ticket.getOutTime() - ticket.getInTime(); // In MS
         long chargedDuration = (long)(duration - Fare.FREE_DURATION_IN_MS());
