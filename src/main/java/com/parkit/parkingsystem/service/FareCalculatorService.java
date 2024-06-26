@@ -6,6 +6,7 @@ public class FareCalculatorService {
 
 
     public void calculateFare(Ticket ticket){
+        System.out.println("Is Recurent = " + ticket.isRecurrent());
         if( (ticket.getOutTime() == 0) || (ticket.getOutTime()<=(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime());
         }

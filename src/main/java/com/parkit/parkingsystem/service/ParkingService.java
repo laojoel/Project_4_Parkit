@@ -14,11 +14,11 @@ public class ParkingService {
 
     private static final Logger logger = LogManager.getLogger("ParkingService");
 
-    private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
+    final private static FareCalculatorService fareCalculatorService = new FareCalculatorService();
 
-    private InputReaderUtil inputReaderUtil;
-    private ParkingSpotDAO parkingSpotDAO;
-    private TicketDAO ticketDAO;
+    final private InputReaderUtil inputReaderUtil;
+    final private ParkingSpotDAO parkingSpotDAO;
+    final private TicketDAO ticketDAO;
 
     public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
         this.inputReaderUtil = inputReaderUtil;
@@ -57,11 +57,10 @@ public class ParkingService {
     }
 
     public ParkingSpot getNextParkingNumberIfAvailable(){
-        int parkingNumber=0;
         ParkingSpot parkingSpot = null;
         try{
             ParkingType parkingType = getVehicleType();
-            parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
+            int parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
             if(parkingNumber > 0){
                 parkingSpot = new ParkingSpot(parkingNumber,parkingType, true);
             }
@@ -95,7 +94,8 @@ public class ParkingService {
             long outTime = Instant.now().toEpochMilli();
             ticket.setOutTime(outTime);
             fareCalculatorService.calculateFare(ticket);
-            if (ticketDAO.updateTicket(ticket)) {
+            boolean updateSuccess = ticketDAO.updateTicket(ticket);
+            if (updateSuccess) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
                 parkingSpotDAO.updateParking(parkingSpot);

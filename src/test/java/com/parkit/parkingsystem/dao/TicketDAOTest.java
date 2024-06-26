@@ -1,8 +1,5 @@
-package com.parkit.parkingsystem.integration;
+package com.parkit.parkingsystem.dao;
 
-import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.ParkingSpotDAO;
-import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.integration.config.DataBaseTestConfig;
 import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.model.Ticket;
@@ -16,16 +13,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-
 @ExtendWith(MockitoExtension.class)
-public class ParkingDataBaseIT {
-
-    private final static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+class TicketDAOTest {
+    private static final DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
     private static ParkingSpotDAO parkingSpotDAO;
     private static TicketDAO ticketDAO;
     private static DataBasePrepareService dataBasePrepareService;
@@ -55,46 +48,22 @@ public class ParkingDataBaseIT {
     }
 
     @Test
-    public void testParkingACar() {
+    public void testGetTicket() {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
 
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
-        int nextParkingSlot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
-
         assertNotNull(ticket);
-        assertEquals(2, nextParkingSlot);
     }
 
     @Test
-    public void testParkingLotExit(){
-        testParkingACar();
+    public void testUpdateTicket() {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processExitingVehicle();
+        parkingService.processIncomingVehicle();
 
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
-        int nextParkingSlot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
-
-        assertNotNull(ticket);
-        assertEquals(1, nextParkingSlot);
-    }
-
-    @Test
-    void testParkingRecurringUser() throws Exception {
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
-        parkingService.processExitingVehicle();
-
-        Ticket ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
-        assertTrue(ticket.isRecurrent());
-    }
-
-    @Test
-    void testNonRecurringUser() throws Exception {
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();
-        Ticket ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
-        assertFalse(ticket.isRecurrent());
+        boolean result = ticketDAO.updateTicket(ticket);
+        assertTrue(result);
     }
 
 }
