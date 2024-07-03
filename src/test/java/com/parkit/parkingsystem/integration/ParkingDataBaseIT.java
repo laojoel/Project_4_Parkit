@@ -63,7 +63,11 @@ public class ParkingDataBaseIT {
         int nextParkingSlot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
 
         assertNotNull(ticket);
+        assertTrue(ticket.getInTime() >= 1);
+        assertTrue(ticket.getId() >= 1);
+        assertEquals("ABCDEF", ticket.getVehicleRegNumber());
         assertEquals(2, nextParkingSlot);
+
     }
 
     @Test
@@ -77,6 +81,9 @@ public class ParkingDataBaseIT {
 
         assertNotNull(ticket);
         assertEquals(1, nextParkingSlot);
+        assertTrue(ticket.getId() >= 1);
+        assertTrue(ticket.getInTime() >= 1);
+        assertTrue(ticket.getOutTime() >= 1);
     }
 
     @Test
@@ -86,7 +93,10 @@ public class ParkingDataBaseIT {
         parkingService.processExitingVehicle();
 
         Ticket ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
+
         assertTrue(ticket.isRecurrent());
+        assertTrue(ticket.getInTime() >= 1);
+        assertTrue(ticket.getId() >= 1);
     }
 
     @Test
@@ -94,7 +104,10 @@ public class ParkingDataBaseIT {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
         Ticket ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
+
         assertFalse(ticket.isRecurrent());
+        assertTrue(ticket.getInTime() >= 1);
+        assertTrue(ticket.getId() >= 1);
     }
 
 }

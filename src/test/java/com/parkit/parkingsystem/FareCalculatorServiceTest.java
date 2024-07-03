@@ -1,6 +1,4 @@
 package com.parkit.parkingsystem;
-
-import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.constants.Time;
 import com.parkit.parkingsystem.model.ParkingSpot;
@@ -11,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.Instant;
 
 public class FareCalculatorServiceTest {
 
@@ -40,7 +36,7 @@ public class FareCalculatorServiceTest {
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), 0.0);
+        assertEquals(0.0, ticket.getPrice());
     }
     @Test
     public void calculateShortFareBike_NotRecurrent() {
@@ -53,7 +49,7 @@ public class FareCalculatorServiceTest {
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), 0.0);
+        assertEquals(0.0, ticket.getPrice());
     }
     @Test
     public void calculateShortFareCar_Recurrent() {
@@ -66,7 +62,7 @@ public class FareCalculatorServiceTest {
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), 0.0);
+        assertEquals(0.0, ticket.getPrice());
     }
     @Test
     public void calculateShortFareBike_Recurrent() {
@@ -79,7 +75,7 @@ public class FareCalculatorServiceTest {
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), 0.0);
+        assertEquals(0.0, ticket.getPrice());
     }
 
     @Test
@@ -87,15 +83,13 @@ public class FareCalculatorServiceTest {
         double hour = 1.0;
         long inTime = Time.CURRENT_TIME_MINUS_HOUR(hour);
         long outTime = Time.CURRENT_TIME();
-        long deltaTime = outTime - inTime;
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
         ticket.setRecurrent(false);
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        double price = Fare.CAR_RATE_PER_MS()*(Time.HOUR_TO_MS(hour)-Fare.FREE_DURATION_IN_MS());
-        assertEquals(Fare.ROUND_PRICE_DECIMAL(price), ticket.getPrice());
+        assertEquals(0.75, ticket.getPrice());
     }
 
     @Test
@@ -109,8 +103,7 @@ public class FareCalculatorServiceTest {
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        double price = Fare.BIKE_RATE_PER_MS()*(Time.HOUR_TO_MS(hour)-Fare.FREE_DURATION_IN_MS());
-        assertEquals(Fare.ROUND_PRICE_DECIMAL(price), ticket.getPrice());
+        assertEquals(0.49, ticket.getPrice());
     }
 
     @Test
@@ -118,32 +111,26 @@ public class FareCalculatorServiceTest {
         double hour = 1.0;
         long inTime = Time.CURRENT_TIME_MINUS_HOUR(hour);
         long outTime = Time.CURRENT_TIME();
-        long deltaTime = outTime - inTime;
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
         ticket.setRecurrent(true);
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        double basePrice = Fare.CAR_RATE_PER_MS()*(Time.HOUR_TO_MS(hour)-Fare.FREE_DURATION_IN_MS());
-        double discountedPrice = basePrice-(basePrice*Fare.RECURRENCE_DISCOUNT_RATE);
-        assertEquals(Fare.ROUND_PRICE_DECIMAL(discountedPrice), ticket.getPrice());
+        assertEquals(0.71, ticket.getPrice());
     }
     @Test
     public void calculateFareBike_Recurrent() {
         double hour = 1.0;
         long inTime = Time.CURRENT_TIME_MINUS_HOUR(hour);
         long outTime = Time.CURRENT_TIME();
-        long deltaTime = outTime - inTime;
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
         ticket.setRecurrent(true);
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
         fareCalculatorService.calculateFare(ticket);
-        double basePrice = Fare.BIKE_RATE_PER_MS()*(Time.HOUR_TO_MS(hour)-Fare.FREE_DURATION_IN_MS());
-        double discountedPrice = basePrice-(basePrice*Fare.RECURRENCE_DISCOUNT_RATE);
-        assertEquals(Fare.ROUND_PRICE_DECIMAL(discountedPrice), ticket.getPrice());
+        assertEquals(0.47, ticket.getPrice());
     }
 
     @Test
